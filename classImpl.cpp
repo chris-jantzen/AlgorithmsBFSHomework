@@ -18,9 +18,10 @@ public:
   Graph(int numV); // numV is number of vertices
   void buildAdjacencyMatrix(int pairs[]);
   /**** Not sure what the return value needs to be ****/
-  void BFS(int v); // v is starting point
+  int BFS(int v); // v is starting point
   int diameter();
 
+  int maximum(int depths[]);
   // Test methods
   void printAdjMatrix() {
     for (int i=0; i<this->numV; i++) {
@@ -90,7 +91,7 @@ void Graph::buildAdjacencyMatrix(int pairs[]) {
   printAdjMatrix();
 }
 
-void Graph::BFS(int v) {
+int Graph::BFS(int v) {
   // List of "visited" booleans for each vertex
   bool *visited = new bool[this->numV];
   for (int i=0; i<this->numV; i++) {
@@ -101,6 +102,7 @@ void Graph::BFS(int v) {
   int distance[this->numV];
   distance[v] = 0;
   int depth = 0;
+  bool foundNew = false;
 
   visited[v] = true;
   bfsQ.push(v);
@@ -117,7 +119,13 @@ void Graph::BFS(int v) {
         visited[i] = true;
         bfsQ.push(i);
         distance[i] = depth;
+        foundNew = true;
       }
+    }
+    if (foundNew == false) {
+      depth--;
+    } else {
+      foundNew = false;
     }
   }
   std::cout << "\n";
@@ -126,6 +134,26 @@ void Graph::BFS(int v) {
     std::cout << distance[i] << " ";
   }
   std::cout << "\n";
+
+  return maximum(distance);
+}
+
+int Graph::maximum(int depths[]) {
+  int greatest = depths[1];
+  for (int i=0; i<this->numV; i++) {
+    if (greatest < depths[i]) {
+      greatest = depths[i];
+    }
+  }
+  return greatest;
+}
+
+int Graph::diameter() {
+  int arr[this->numV];
+  for (int i=0; i<this->numV; i++) {
+    arr[i] = BFS(i);
+  }
+  return maximum(arr);
 }
 
 int main() {
@@ -134,7 +162,7 @@ int main() {
   int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 4, -1};
   Graph *g = new Graph(n);
   g->buildAdjacencyMatrix(arr);
-  g->BFS(3);
-
+  int depth = g->BFS(3);
+  int maxDepth = g->diameter();
   return 0;
 }
