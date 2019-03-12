@@ -13,8 +13,6 @@ private:
   int numV;
   int **adjacencyMatrix;
   int** buildEdges(int pairs[]); // Array with number of pairs
-  // int** getCountSecondVals(int **edges, int numPairs);
-  // int **countSecondVals;
 
 public:
   Graph(int numV); // numV is number of vertices
@@ -43,13 +41,6 @@ public:
     } 
     std::cout << '\n';
   }
-
-  // void printCountArr() {
-  //   for (int i=0; i<this->numV; i++) {
-  //     std::cout << countSecondVals[i][0] << " ";
-  //   }
-  //   std::cout << "\n";
-  // }
 };
 
 Graph::Graph(int numV) {
@@ -74,7 +65,6 @@ int** Graph::buildEdges(int pairs[]) {
     index += 2;
   }
 
-  // this->countSecondVals = getCountSecondVals(edges, pairs[0]);
   return edges;
 }
 
@@ -108,6 +98,9 @@ void Graph::BFS(int v) {
   }
 
   std::queue<int> bfsQ;
+  int distance[this->numV];
+  distance[v] = 0;
+  int depth = 0;
 
   visited[v] = true;
   bfsQ.push(v);
@@ -117,34 +110,23 @@ void Graph::BFS(int v) {
     // std::cout << v << " ";
     showQ(bfsQ);
     bfsQ.pop();
+    depth++;
 
     for (int i=0; i<this->numV; i++) {
       if((adjacencyMatrix[v][i] == 1) && !visited[i]) {
         visited[i] = true;
         bfsQ.push(i);
+        distance[i] = depth;
       }
     }
   }
   std::cout << "\n";
+
+  for(int i=0; i<this->numV; i++) {
+    std::cout << distance[i] << " ";
+  }
+  std::cout << "\n";
 }
-
-// int** Graph::getCountSecondVals(int **edges, int numPairs) {
-//   int **countSeconds;
-//   countSeconds = new int*[this->numV];
-//   for (int i=0; i<this->numV; i++) {
-//     countSeconds[i] = new int[1];
-//   }
-
-//   for (int i=0; i<this->numV; i++) {
-//     countSeconds[i][0] = 0;
-//   }
-
-//   for (int i=0; i<numPairs; i++) {
-//     countSeconds[edges[i][0]][0]++;
-//   }
-
-//   return countSeconds;
-// }
 
 int main() {
   int n = 6;
