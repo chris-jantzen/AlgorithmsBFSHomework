@@ -10,15 +10,14 @@
 
 class Graph {
 private:
-  int numV;
-  int **adjacencyMatrix;
+  int numV; // Number of vertices in the graph
+  int **adjacencyMatrix; // Adjacency matrix of the graph
   int** buildEdges(int pairs[]); // Array with number of pairs
-  int maximum(int depths[]);
+  int maximum(int depths[]); // Maximum value of an array
 
 public:
   Graph(int numV); // numV is number of vertices
   void buildAdjacencyMatrix(int pairs[]);
-  /**** Not sure what the return value needs to be ****/
   int* BFS(int v); // v is starting point
   int diameter();
   int** Component();
@@ -108,7 +107,6 @@ int* Graph::BFS(int v) {
 
   while(!bfsQ.empty()) {
     v = bfsQ.front();
-    // std::cout << v << " ";
     // showQ(bfsQ);
     bfsQ.pop();
 
@@ -120,12 +118,6 @@ int* Graph::BFS(int v) {
       }
     }
   }
-
-  // std::cout << "\n";
-  // for(int i=0; i<this->numV; i++) {
-  //   std::cout << distance[i] << " ";
-  // }
-  // std::cout << "\n";
   
   int depth = 0;
   for (int i=0; i<this->numV; i++) {
@@ -133,7 +125,9 @@ int* Graph::BFS(int v) {
       depth = -1;
     }
   }
-  depth = maximum(distance);
+  if (depth != -1) {
+    depth = maximum(distance);
+  }
 
   int* set;
   int numVisited = 0;
@@ -187,8 +181,13 @@ int Graph::diameter() {
 int** Graph::Component() {
   int** sets;
   sets = new int*[this->numV]; // max space needed if only individual nodes
+  int sizes[this->numV];
+  for (int i=0; i<this->numV; i++) {
+    sizes[i] = 0;
+  }
 
   sets[0] = BFS(0);
+  sizes[0] = sets[0][0];
   if (sets[0][0] == this->numV) {
     return sets;
   }
@@ -201,25 +200,26 @@ int** Graph::Component() {
     visited[sets[0][i]] = true;
   }
 
-  for (int i=0; i<this->numV; i++) {
-    if(visited[i] == true) {
-      std::cout << "t ";
-    } else {
-      std::cout << "f ";
-    }
-  }
-  std::cout << "\n";
-
   int setsIndex = 1;
   while (true) {
     for (int i=1; i<sets[0][0]+1; i++) {
       if (!visited[i]) {
         sets[setsIndex] = BFS(i);
+        sizes[setsIndex] = sets[setsIndex][0];
+        setsIndex++;
         continue;
       }
     }
     break;
   }
+
+  for (int i=0; i<this->numV; i++) {
+    for (int j=1; j<sizes[i]+1; j++) {
+      std::cout << sets[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+
   return sets;
 }
 
@@ -231,7 +231,6 @@ int main() {
   g->buildAdjacencyMatrix(arr);
   int *set = g->BFS(3);
   int maxDepth = g->diameter();
-  std::cout << maxDepth << std::endl;
-  int **a = g->Component();
+  int **componentSet = g->Component();
   return 0;
 }
