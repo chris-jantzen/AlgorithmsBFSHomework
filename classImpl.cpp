@@ -13,6 +13,8 @@ private:
   int numV;
   int **adjacencyMatrix;
   int** buildEdges(int pairs[]); // Array with number of pairs
+  // int** getCountSecondVals(int **edges, int numPairs);
+  // int **countSecondVals;
 
 public:
   Graph(int numV); // numV is number of vertices
@@ -25,7 +27,7 @@ public:
   void printAdjMatrix() {
     for (int i=0; i<this->numV; i++) {
       for (int j=0; j<this->numV; j++) {
-        std::cout << adjacencyMatrix[i][j] << " ";
+        std::cout << this->adjacencyMatrix[i][j] << " ";
       }
       std::cout << "\n";
     }
@@ -34,13 +36,20 @@ public:
 
   void showQ(std::queue<int> gq) {
     std::queue<int> g = gq; 
-    while (!g.empty()) 
+    while (!g.empty())
     { 
-        std::cout << " " << g.front(); 
-        g.pop(); 
+      std::cout << " " << g.front();
+      g.pop(); 
     } 
     std::cout << '\n';
   }
+
+  // void printCountArr() {
+  //   for (int i=0; i<this->numV; i++) {
+  //     std::cout << countSecondVals[i][0] << " ";
+  //   }
+  //   std::cout << "\n";
+  // }
 };
 
 Graph::Graph(int numV) {
@@ -64,6 +73,8 @@ int** Graph::buildEdges(int pairs[]) {
     }
     index += 2;
   }
+
+  // this->countSecondVals = getCountSecondVals(edges, pairs[0]);
   return edges;
 }
 
@@ -108,7 +119,7 @@ void Graph::BFS(int v) {
     bfsQ.pop();
 
     for (int i=0; i<this->numV; i++) {
-      if(!visited[i]) {
+      if((adjacencyMatrix[v][i] == 1 || adjacencyMatrix[i][v] == 1) && !visited[i]) {
         visited[i] = true;
         bfsQ.push(i);
       }
@@ -117,13 +128,31 @@ void Graph::BFS(int v) {
   std::cout << "\n";
 }
 
+// int** Graph::getCountSecondVals(int **edges, int numPairs) {
+//   int **countSeconds;
+//   countSeconds = new int*[this->numV];
+//   for (int i=0; i<this->numV; i++) {
+//     countSeconds[i] = new int[1];
+//   }
+
+//   for (int i=0; i<this->numV; i++) {
+//     countSeconds[i][0] = 0;
+//   }
+
+//   for (int i=0; i<numPairs; i++) {
+//     countSeconds[edges[i][0]][0]++;
+//   }
+
+//   return countSeconds;
+// }
+
 int main() {
   int n = 6;
   // int arr[] = {4, 0, 1, 0, 2, 1, 2, 2, 3, -1};
-  int arr[] = {6, 0, 1, 0, 2, 0, 3, 1, 5, 2, 3, 3, 4, -1};
+  int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 4, -1};
   Graph *g = new Graph(n);
   g->buildAdjacencyMatrix(arr);
-  g->BFS(0);
+  g->BFS(3);
 
   return 0;
 }
