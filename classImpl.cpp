@@ -110,7 +110,7 @@ int Graph::BFS(int v) {
   while(!bfsQ.empty()) {
     v = bfsQ.front();
     // std::cout << v << " ";
-    showQ(bfsQ);
+    // showQ(bfsQ);
     bfsQ.pop();
     depth++;
 
@@ -128,13 +128,18 @@ int Graph::BFS(int v) {
       foundNew = false;
     }
   }
-  std::cout << "\n";
 
-  for(int i=0; i<this->numV; i++) {
-    std::cout << distance[i] << " ";
+  // std::cout << "\n";
+  // for(int i=0; i<this->numV; i++) {
+  //   std::cout << distance[i] << " ";
+  // }
+  // std::cout << "\n";
+
+  for (int i=0; i<this->numV; i++) {
+    if (visited[i] == false) {
+      return -1;
+    }
   }
-  std::cout << "\n";
-
   return maximum(distance);
 }
 
@@ -163,6 +168,7 @@ int main() {
   Graph *g = new Graph(n);
   g->buildAdjacencyMatrix(arr);
   int depth = g->BFS(3);
+  std::cout << "\n\nDepth " << depth << std::endl;
   int maxDepth = g->diameter();
   return 0;
 }
