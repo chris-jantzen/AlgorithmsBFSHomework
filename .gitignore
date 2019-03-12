@@ -1,4 +1,5 @@
 .vscode/
+.DS_Store
 array.dSYM/
 class.dSYM/
 array

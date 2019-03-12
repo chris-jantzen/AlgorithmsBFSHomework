@@ -12,12 +12,35 @@ class Graph {
 private:
   int numV;
   int **adjacencyMatrix;
-public:
-  /* Can probably remove need for numV by pulling it from pairs[] */
-  Graph(int numV); // numV is number of vertices
   int** buildEdges(int pairs[]); // Array with number of pairs
-  void buildAdjacencyMatrix(int **edges);
+
+public:
+  Graph(int numV); // numV is number of vertices
+  void buildAdjacencyMatrix(int pairs[]);
+  /**** Not sure what the return value needs to be ****/
   void BFS(int v); // v is starting point
+  int diameter();
+
+  // Test methods
+  void printAdjMatrix() {
+    for (int i=0; i<this->numV; i++) {
+      for (int j=0; j<this->numV; j++) {
+        std::cout << adjacencyMatrix[i][j] << " ";
+      }
+      std::cout << "\n";
+    }
+    std::cout << "\n";
+  }
+
+  void showQ(std::queue<int> gq) {
+    std::queue<int> g = gq; 
+    while (!g.empty()) 
+    { 
+        std::cout << " " << g.front(); 
+        g.pop(); 
+    } 
+    std::cout << '\n';
+  }
 };
 
 Graph::Graph(int numV) {
@@ -44,7 +67,9 @@ int** Graph::buildEdges(int pairs[]) {
   return edges;
 }
 
-void Graph::buildAdjacencyMatrix(int **edges) {
+void Graph::buildAdjacencyMatrix(int pairs[]) {
+  int **edges = buildEdges(pairs);
+
   int** aMatrix = 0;
   aMatrix = new int*[this->numV];
 
@@ -55,12 +80,13 @@ void Graph::buildAdjacencyMatrix(int **edges) {
     }
   }
 
-  for (int i=0; i<this->numV; i++) {
+  for (int i=0; i<pairs[0]; i++) {
     aMatrix[edges[i][0]][edges[i][1]] = 1;
     aMatrix[edges[i][1]][edges[i][0]] = 1;
   }
 
   this->adjacencyMatrix = aMatrix;
+  printAdjMatrix();
 }
 
 void Graph::BFS(int v) {
@@ -77,7 +103,8 @@ void Graph::BFS(int v) {
 
   while(!bfsQ.empty()) {
     v = bfsQ.front();
-    std::cout << v << " ";
+    // std::cout << v << " ";
+    showQ(bfsQ);
     bfsQ.pop();
 
     for (int i=0; i<this->numV; i++) {
@@ -87,13 +114,15 @@ void Graph::BFS(int v) {
       }
     }
   }
+  std::cout << "\n";
 }
 
 int main() {
-  int arr[] = {4, 0, 1, 0, 2, 1, 2, 2, 3, -1};
-  Graph *g = new Graph(arr[0]);
-  int** graph = g->buildEdges(arr); // Combine these two later
-  g->buildAdjacencyMatrix(graph);
+  int n = 6;
+  // int arr[] = {4, 0, 1, 0, 2, 1, 2, 2, 3, -1};
+  int arr[] = {6, 0, 1, 0, 2, 0, 3, 1, 5, 2, 3, 3, 4, -1};
+  Graph *g = new Graph(n);
+  g->buildAdjacencyMatrix(arr);
   g->BFS(0);
 
   return 0;
