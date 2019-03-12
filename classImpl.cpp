@@ -200,12 +200,25 @@ int** Graph::Component() {
   for (int i=0; i<this->numV; i++) {
     visited[sets[0][i]] = true;
   }
-  
-  int setsIndex = 1;
-  for (int i=1; i<sets[0][0]+1; i++) {
-    if (sets[0][i] != i) {
-      sets[setsIndex] = BFS(i);
+
+  for (int i=0; i<this->numV; i++) {
+    if(visited[i] == true) {
+      std::cout << "t ";
+    } else {
+      std::cout << "f ";
     }
+  }
+  std::cout << "\n";
+
+  int setsIndex = 1;
+  while (true) {
+    for (int i=1; i<sets[0][0]+1; i++) {
+      if (!visited[i]) {
+        sets[setsIndex] = BFS(i);
+        continue;
+      }
+    }
+    break;
   }
   return sets;
 }
