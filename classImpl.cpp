@@ -24,6 +24,7 @@ public:
 
   // Test methods
   void printAdjMatrix() {
+    std::cout << "Adjacency Matrix\n";
     for (int i=0; i<this->numV; i++) {
       for (int j=0; j<this->numV; j++) {
         std::cout << this->adjacencyMatrix[i][j] << " ";
@@ -66,6 +67,24 @@ int** Graph::buildEdges(int pairs[]) {
     index += 2;
   }
 
+  std::cout << "Edges:\n{";
+  for (int i=0; i<edgesIndex; i++) {
+    std::cout << "{";
+    for (int j=0; j<2; j++) {
+      if (j == 0) {
+        std::cout << edges[i][j] << ", ";
+      } else {
+        std::cout << edges[i][j];
+      }
+    }
+    if (i == edgesIndex-1) {
+      std::cout << "}";
+    } else {
+      std::cout << "}, ";
+    }
+  }
+  std::cout << "}\n\n";
+
   return edges;
 }
 
@@ -88,7 +107,7 @@ void Graph::buildAdjacencyMatrix(int pairs[]) {
   }
 
   this->adjacencyMatrix = aMatrix;
-  // printAdjMatrix();
+  printAdjMatrix();
 }
 
 int* Graph::BFS(int v) {
@@ -171,10 +190,6 @@ int Graph::diameter() {
       return -1;
     }
   }
-  for (int i=0; i<this->numV; i++) {
-    std::cout << arr[i] << " ";
-  }
-  std::cout << std::endl;
   return maximum(arr);
 }
 
@@ -189,6 +204,10 @@ int** Graph::Component() {
   sets[0] = BFS(0);
   sizes[0] = sets[0][0];
   if (sets[0][0] == this->numV) {
+    for (int i=1; i<this->numV+1; i++) {
+      std::cout << sets[0][i] << " ";
+    }
+    std::cout << std::endl;
     return sets;
   }
 
@@ -213,6 +232,7 @@ int** Graph::Component() {
     break;
   }
 
+  std::cout << "Component sets\n";
   for (int i=0; i<this->numV; i++) {
     for (int j=1; j<sizes[i]+1; j++) {
       std::cout << sets[i][j] << " ";
@@ -226,11 +246,12 @@ int** Graph::Component() {
 int main() {
   int n = 6;
   // int arr[] = {4, 0, 1, 0, 2, 1, 2, 2, 3, -1};
-  int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 5, -1};
+  int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 4, -1};
   Graph *g = new Graph(n);
   g->buildAdjacencyMatrix(arr);
   int *set = g->BFS(3);
   int maxDepth = g->diameter();
+  std::cout << "Diameter: " << maxDepth << "\n\n";
   int **componentSet = g->Component();
   return 0;
 }
