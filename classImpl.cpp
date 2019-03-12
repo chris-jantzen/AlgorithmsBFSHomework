@@ -13,15 +13,16 @@ private:
   int numV;
   int **adjacencyMatrix;
   int** buildEdges(int pairs[]); // Array with number of pairs
+  int maximum(int depths[]);
 
 public:
   Graph(int numV); // numV is number of vertices
   void buildAdjacencyMatrix(int pairs[]);
   /**** Not sure what the return value needs to be ****/
-  int BFS(int v); // v is starting point
+  int* BFS(int v); // v is starting point
   int diameter();
+  int** Component();
 
-  int maximum(int depths[]);
   // Test methods
   void printAdjMatrix() {
     for (int i=0; i<this->numV; i++) {
@@ -88,10 +89,10 @@ void Graph::buildAdjacencyMatrix(int pairs[]) {
   }
 
   this->adjacencyMatrix = aMatrix;
-  printAdjMatrix();
+  // printAdjMatrix();
 }
 
-int Graph::BFS(int v) {
+int* Graph::BFS(int v) {
   // List of "visited" booleans for each vertex
   bool *visited = new bool[this->numV];
   for (int i=0; i<this->numV; i++) {
@@ -101,8 +102,6 @@ int Graph::BFS(int v) {
   std::queue<int> bfsQ;
   int distance[this->numV];
   distance[v] = 0;
-  int depth = 0;
-  bool foundNew = false;
 
   visited[v] = true;
   bfsQ.push(v);
@@ -112,20 +111,13 @@ int Graph::BFS(int v) {
     // std::cout << v << " ";
     // showQ(bfsQ);
     bfsQ.pop();
-    depth++;
 
     for (int i=0; i<this->numV; i++) {
       if((adjacencyMatrix[v][i] == 1) && !visited[i]) {
         visited[i] = true;
         bfsQ.push(i);
-        distance[i] = depth;
-        foundNew = true;
+        distance[i] = distance[v]+1;
       }
-    }
-    if (foundNew == false) {
-      depth--;
-    } else {
-      foundNew = false;
     }
   }
 
@@ -134,13 +126,32 @@ int Graph::BFS(int v) {
   //   std::cout << distance[i] << " ";
   // }
   // std::cout << "\n";
-
+  
+  int depth = 0;
   for (int i=0; i<this->numV; i++) {
     if (visited[i] == false) {
-      return -1;
+      depth = -1;
     }
   }
-  return maximum(distance);
+  depth = maximum(distance);
+
+  int* set;
+  int numVisited = 0;
+  for (int i=0; i<this->numV; i++) {
+    if(visited[i] == true) numVisited++;
+  }
+  set = new int[numVisited + 2];
+  int index = 1;
+  int numberCheckingIfVisited = 0;
+  while(index < numVisited+1) {
+    if(visited[numberCheckingIfVisited] == true) {
+      set[index++] = numberCheckingIfVisited;
+    }
+    numberCheckingIfVisited++;
+  }
+  set[0] = numVisited;
+  set[numVisited+1] = depth;
+  return set;
 }
 
 int Graph::maximum(int depths[]) {
@@ -155,20 +166,59 @@ int Graph::maximum(int depths[]) {
 
 int Graph::diameter() {
   int arr[this->numV];
+  int *temp;
+  int index = 0;
   for (int i=0; i<this->numV; i++) {
-    arr[i] = BFS(i);
+    temp = BFS(i);
+    arr[i] = temp[temp[0]+1];
+    if (arr[i] < 0) {
+      return -1;
+    } else if (arr[i] > this->numV) {
+      return -1;
+    }
   }
+  for (int i=0; i<this->numV; i++) {
+    std::cout << arr[i] << " ";
+  }
+  std::cout << std::endl;
   return maximum(arr);
+}
+
+int** Graph::Component() {
+  int** sets;
+  sets = new int*[this->numV]; // max space needed if only individual nodes
+
+  sets[0] = BFS(0);
+  if (sets[0][0] == this->numV) {
+    return sets;
+  }
+
+  bool *visited = new bool[this->numV];
+  for (int i=0; i<this->numV; i++) {
+    visited[i] = false;
+  }
+  for (int i=0; i<this->numV; i++) {
+    visited[sets[0][i]] = true;
+  }
+  
+  int setsIndex = 1;
+  for (int i=1; i<sets[0][0]+1; i++) {
+    if (sets[0][i] != i) {
+      sets[setsIndex] = BFS(i);
+    }
+  }
+  return sets;
 }
 
 int main() {
   int n = 6;
   // int arr[] = {4, 0, 1, 0, 2, 1, 2, 2, 3, -1};
-  int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 4, -1};
+  int arr[] = {5, 0, 1, 0, 2, 1, 5, 2, 3, 3, 5, -1};
   Graph *g = new Graph(n);
   g->buildAdjacencyMatrix(arr);
-  int depth = g->BFS(3);
-  std::cout << "\n\nDepth " << depth << std::endl;
+  int *set = g->BFS(3);
   int maxDepth = g->diameter();
+  std::cout << maxDepth << std::endl;
+  int **a = g->Component();
   return 0;
 }
