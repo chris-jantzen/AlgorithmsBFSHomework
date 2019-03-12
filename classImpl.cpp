@@ -119,7 +119,7 @@ void Graph::BFS(int v) {
     bfsQ.pop();
 
     for (int i=0; i<this->numV; i++) {
-      if((adjacencyMatrix[v][i] == 1 || adjacencyMatrix[i][v] == 1) && !visited[i]) {
+      if((adjacencyMatrix[v][i] == 1) && !visited[i]) {
         visited[i] = true;
         bfsQ.push(i);
       }
