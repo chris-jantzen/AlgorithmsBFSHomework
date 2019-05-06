@@ -11,7 +11,7 @@
 class Graph {
 private:
   int numV; // Number of vertices in the graph
-  int **adjacencyMatrix; // Adjacency matrix of the graph
+  int** adjacencyMatrix; // Adjacency matrix of the graph
   int** buildEdges(int pairs[]); // Array with number of pairs
   int maximum(int depths[]); // Maximum value of an array
 
